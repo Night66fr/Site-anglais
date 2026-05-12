@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CityRoots — Pittencrieff Park</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a2e1a;
+    --moss: #2d4a2d;
+    --fern: #3d6b3d;
+    --leaf: #5a9e5a;
+    --sage: #8ab88a;
+    --mist: #c8ddc8;
+    --bark: #7a5c3a;
+    --root: #4a3020;
+    --cream: #f5f0e8;
+    --parchment: #ede5d0;
+    --gold: #c8a850;
+    --amber: #d4852a;
+    --night: #0a150a;
+    --ink: #111d11;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--night);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.5;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 30px; height: 30px;
+    border: 1px solid rgba(200,168,80,0.35);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.6rem 4rem;
+  }
+  nav::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(10,21,10,0.9) 0%, transparent 100%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--sage);
+    text-decoration: none;
+    position: relative; z-index: 1;
+  }
+  .nav-logo span { color: var(--gold); }
+  .back-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    opacity: 0.55;
+    transition: opacity 0.4s, color 0.4s, letter-spacing 0.4s;
+    border-bottom: 1px solid rgba(200,221,200,0.15);
+    padding-bottom: 3px;
+    position: relative; z-index: 1;
+  }
+  .back-btn:hover { opacity: 1; color: var(--gold); letter-spacing: 0.3em; border-color: var(--gold); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    position: relative;
+    display: grid;
+    place-items: end start;
+    overflow: hidden;
+    padding: 0 5rem 7rem;
+  }
+
+  .hero-img {
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=85&w=2000');
+    background-size: cover;
+    background-position: center 30%;
+    z-index: 0;
+    animation: heroZoom 20s ease-in-out infinite alternate;
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.0); }
+    to   { transform: scale(1.08); }
+  }
+
+  .hero-vignette {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(to top,   rgba(10,21,10,0.97) 0%,   rgba(10,21,10,0.5) 35%, transparent 65%),
+      linear-gradient(to right, rgba(10,21,10,0.55) 0%,   transparent 60%),
+      linear-gradient(to bottom,rgba(10,21,10,0.45) 0%,   transparent 30%);
+  }
+
+  .hero-line {
+    position: absolute; left: 5rem; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent 8%, rgba(200,168,80,0.2) 35%, rgba(200,168,80,0.2) 70%, transparent 100%);
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative; z-index: 3;
+    padding-left: 2.5rem;
+    border-left: 2px solid rgba(200,168,80,0.25);
+    opacity: 0;
+    animation: fadeUp 1.3s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.8rem;
+    display: block;
+    opacity: 0.8;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4.5rem, 11vw, 9rem);
+    font-weight: 300;
+    line-height: 0.88;
+    color: var(--cream);
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.02em;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--sage);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--mist);
+    max-width: 50ch;
+    line-height: 1.65;
+    opacity: 0.75;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 3rem; right: 5rem;
+    z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.6s forwards;
+  }
+  .hero-scroll span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--sage);
+    opacity: 0.4;
+    writing-mode: vertical-rl;
+  }
+  .scroll-bar {
+    width: 1px; height: 55px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollAnim 2.2s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    30%  { transform: scaleY(1); opacity: 1; }
+    70%  { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+  }
+
+  /* ── SHARED SECTION LABELS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(35px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    opacity: 0.75;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1; max-width: 55px; height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 300;
+    line-height: 0.95;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; font-weight: 600; color: var(--leaf); }
+
+  .section-desc {
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--mist);
+    opacity: 0.6;
+    max-width: 52ch;
+    line-height: 1.7;
+  }
+
+  /* ── MAP SECTION ── */
+  #map-section {
+    padding: 9rem 5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .map-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: flex-end;
+    gap: 3rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .toggle-wrap {
+    display: inline-flex;
+    border: 1px solid rgba(200,168,80,0.18);
+    background: rgba(10,21,10,0.5);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+  }
+  .toggle-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    background: transparent;
+    color: var(--mist);
+    border: none;
+    cursor: pointer;
+    transition: color 0.35s, background 0.35s;
+    position: relative;
+  }
+  .toggle-btn::after {
+    content: '';
+    position: absolute; bottom: 0; left: 50%; right: 50%;
+    height: 1px; background: var(--gold);
+    transition: left 0.4s ease, right 0.4s ease;
+  }
+  .toggle-btn.active { color: var(--gold); background: rgba(200,168,80,0.05); }
+  .toggle-btn.active::after { left: 12%; right: 12%; }
+
+  .map-container {
+    position: relative;
+    border: 1px solid rgba(200,168,80,0.1);
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(200,221,200,0.04);
+  }
+  .map-container::after {
+    content: '';
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    box-shadow: inset 0 0 50px rgba(10,21,10,0.45);
+  }
+
+  .map-view { display: none; width: 100%; }
+  .map-view.active {
+    display: block;
+    animation: mapReveal 0.65s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes mapReveal {
+    from { opacity: 0; transform: scale(1.025); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .map-view img { width: 100%; height: auto; display: block; }
+
+  .map-caption {
+    position: absolute; bottom: 1.2rem; right: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.4;
+    z-index: 3;
+  }
+
+  /* ── BIODIVERSITY ── */
+  #biodiversity {
+    padding: 3rem 5rem 9rem;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .bio-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 4rem; gap: 2rem;
+  }
+
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .bio-card {
+    position: relative;
+    height: 560px;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .bio-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: transform 1.8s cubic-bezier(0.16,1,0.3,1), opacity 0.8s ease;
+    transform: scale(1.06);
+  }
+  .bio-card:hover img { transform: scale(1.14); opacity: 0.88; }
+
+  .bio-card-overlay {
+    position: absolute; inset: 0;
+    padding: 3.5rem;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    background: linear-gradient(to top, rgba(10,21,10,0.94) 0%, rgba(10,21,10,0.25) 55%, transparent 100%);
+  }
+
+  .bio-card-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+    opacity: 0.75;
+  }
+
+  .bio-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+  }
+
+  .bio-card-desc {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--mist);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    line-height: 1.65;
+    max-width: 38ch;
+  }
+  .bio-card:hover .bio-card-desc { opacity: 0.7; transform: translateY(0); }
+
+  .bio-card-line {
+    position: absolute; bottom: 0; left: 0;
+    width: 0; height: 2px; background: var(--gold);
+    transition: width 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .bio-card:hover .bio-card-line { width: 100%; }
+
+  /* ── STRIP ── */
+  #info-strip {
+    border-top: 1px solid rgba(200,221,200,0.05);
+    padding: 0 5rem;
+  }
+
+  .strip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 8rem 0;
+  }
+
+  .strip-item {
+    padding: 0 4.5rem;
+    border-left: 1px solid rgba(200,221,200,0.06);
+  }
+  .strip-item:first-child { border-left: none; padding-left: 0; }
+  .strip-item:last-child { padding-right: 0; }
+
+  .strip-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 7rem;
+    font-weight: 300;
+    font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.04em;
+  }
+
+  .strip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 1rem;
+    opacity: 0.6;
+  }
+
+  .strip-text {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--mist);
+    opacity: 0.45;
+    line-height: 1.7;
+    max-width: 26ch;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(200,221,200,0.05);
+    padding: 3rem 5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--sage);
+    opacity: 0.45;
+    letter-spacing: 0.08em;
+  }
+  .footer-brand em { font-style: italic; color: var(--gold); }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mist);
+    opacity: 0.2;
+  }
+
+  .footer-back {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    opacity: 0.35;
+    transition: opacity 0.4s, color 0.4s, letter-spacing 0.4s;
+    border-bottom: 1px solid rgba(200,221,200,0.1);
+    padding-bottom: 2px;
+  }
+  .footer-back:hover { opacity: 1; color: var(--gold); letter-spacing: 0.26em; border-color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(90,158,90,0.12), transparent);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    #hero { padding: 0 2rem 5rem; }
+    .hero-line { left: 2rem; }
+    .hero-content { padding-left: 1.8rem; }
+    #map-section, #biodiversity { padding: 5rem 2rem; }
+    .map-header { grid-template-columns: 1fr; }
+    .bio-grid { grid-template-columns: 1fr; }
+    .bio-card { height: 400px; }
+    #info-strip { padding: 0 2rem; }
+    .strip-grid { grid-template-columns: 1fr; padding: 4rem 0; }
+    .strip-item { border-left: none; border-top: 1px solid rgba(200,221,200,0.06); padding: 3rem 0; }
+    .strip-item:first-child { border-top: none; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2.5rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="Anglais_site.html" class="nav-logo">City<span>Roots</span></a>
+  <a href="Anglais_site.html" class="back-btn">← Back to Journey</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-img"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-line"></div>
+
+  <div class="hero-content">
+    <span class="hero-eyebrow">Dunfermline, Scotland · Est. 1903</span>
+    <h1 class="hero-title">Pittencrieff<em>Park</em></h1>
+    <p class="hero-sub">A 76-acre historical legacy gifted by Andrew Carnegie, where nature and heritage intertwine.</p>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-bar"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section id="map-section">
+  <div class="map-header reveal">
+    <div>
+      <p class="section-label">Navigation</p>
+      <h2 class="section-title">Explore the <em>Grounds</em></h2>
+      <p class="section-desc">Toggle between the geographical satellite view and the illustrated garden plan.</p>
+    </div>
+    <div class="toggle-wrap">
+      <button class="toggle-btn active" onclick="switchMap('satellite')">Satellite</button>
+      <button class="toggle-btn" onclick="switchMap('plan')">Garden Plan</button>
+    </div>
+  </div>
+
+  <div class="map-container reveal">
+    <div id="view-satellite" class="map-view active">
+      <img src="Park_Reel.png" alt="Satellite View of Pittencrieff Park">
+    </div>
+    <div id="view-plan" class="map-view">
+      <img src="Park_Plan.png" alt="Garden Plan of Pittencrieff Park">
+    </div>
+    <div class="map-caption">Pittencrieff Park · Dunfermline, Scotland</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BIODIVERSITY -->
+<section id="biodiversity">
+  <div class="bio-header reveal">
+    <div>
+      <p class="section-label">Ecosystem</p>
+      <h2 class="section-title">Flora &amp; <em>Fauna</em></h2>
+    </div>
+    <p class="section-desc" style="max-width:34ch; text-align:right">The park hosts a rich tapestry of wildlife, from resident peacocks to ancient woodland canopy.</p>
+  </div>
+
+  <div class="bio-grid reveal">
+    <div class="bio-card">
+      <img src="Photo_1.jpg" alt="Peacocks in Pittencrieff Park">
+      <div class="bio-card-overlay">
+        <span class="bio-card-tag">Avian Residents</span>
+        <h3 class="bio-card-title">The Peacocks</h3>
+        <p class="bio-card-desc">Symbols of the park since 1905, these birds roam freely across the Glen.</p>
+      </div>
+      <div class="bio-card-line"></div>
+    </div>
+
+    <div class="bio-card">
+      <img src="Photo_2.jpg" alt="Ancient woodland in the park">
+      <div class="bio-card-overlay">
+        <span class="bio-card-tag">Woodland</span>
+        <h3 class="bio-card-title">Ancient Oaks</h3>
+        <p class="bio-card-desc">Providing a dense canopy and vital habitat for local grey squirrels and owls.</p>
+      </div>
+      <div class="bio-card-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- INFO STRIP -->
+<section id="info-strip">
+  <div class="strip-grid">
+    <div class="strip-item reveal">
+      <span class="strip-num">76</span>
+      <p class="strip-label">Acres</p>
+      <p class="strip-text">Of diverse landscape, from formal gardens to deep woodland glens.</p>
+    </div>
+    <div class="strip-item reveal" style="transition-delay:0.15s">
+      <span class="strip-num">1903</span>
+      <p class="strip-label">Established</p>
+      <p class="strip-text">Purchased by Andrew Carnegie and given to the people of Dunfermline.</p>
+    </div>
+    <div class="strip-item reveal" style="transition-delay:0.3s">
+      <span class="strip-num">#1</span>
+      <p class="strip-label">Recognition</p>
+      <p class="strip-text">Voted Scotland's best park multiple times for its beauty and heritage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">City<em>Roots</em></div>
+  <div class="footer-copy">Project Exploration · 2026</div>
+  <a href="Anglais_site.html" class="footer-back">← Return to Press Kit</a>
+</footer>
+
+<script>
+  /* CURSOR */
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  (function animRing() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  /* MAP TOGGLE */
+  function switchMap(type) {
+    document.querySelectorAll('.map-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    if (type === 'satellite') {
+      document.getElementById('view-satellite').classList.add('active');
+      document.querySelectorAll('.toggle-btn')[0].classList.add('active');
+    } else {
+      document.getElementById('view-plan').classList.add('active');
+      document.querySelectorAll('.toggle-btn')[1].classList.add('active');
+    }
+  }
+
+  /* SCROLL REVEAL */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
